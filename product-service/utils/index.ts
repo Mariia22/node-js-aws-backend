@@ -1,6 +1,6 @@
 import * as lambda from "aws-cdk-lib/aws-lambda";
 
-export const response = (code: number, body: Record<string, any>) => ({
+export const response = (code: number, body: any) => ({
   statusCode: code,
   headers: {
     "Access-Control-Allow-Credentials": true,

@@ -9,11 +9,17 @@ import { shareLambdaProps } from "../utils";
 export class ProductServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
-    
+
     const getProducts = new NodejsFunction(this, "GetProductsLambda", {
       ...shareLambdaProps,
       functionName: "getProducts",
       entry: path.join(__dirname, "..", "handlers", "getProducts.ts")
+    });
+
+    const getProductsById = new NodejsFunction(this, "GetProductsByIdLambda", {
+      ...shareLambdaProps,
+      functionName: "getProductsById",
+      entry: path.join(__dirname, "..", "handlers", "getProductsById.ts")
     });
 
     // Defines API Gateway
@@ -25,10 +31,20 @@ export class ProductServiceStack extends cdk.Stack {
       }
     });
 
+    // Defines routes
     httpApi.addRoutes({
       path: "/products",
       methods: [apigwv.HttpMethod.GET],
       integration: new HttpLambdaIntegration("Get products", getProducts)
+    });
+
+    httpApi.addRoutes({
+      path: "/products/{productId}",
+      methods: [apigwv.HttpMethod.GET],
+      integration: new HttpLambdaIntegration(
+        "Get products by id",
+        getProductsById
+      )
     });
   }
 }

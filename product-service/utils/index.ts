@@ -18,4 +18,15 @@ export const shareLambdaProps = {
   }
 };
 
-export const defaultTableName = "Products";
+export const joinArrays = (
+  array1: Record<string, any>[],
+  array2: Record<string, any>[]
+): Record<string, any>[] => {
+  const result = array1.map((data) =>
+    Object.assign(
+      data,
+      array2.find((item) => item.product_id === data.id)
+    )
+  );
+  return result;
+};

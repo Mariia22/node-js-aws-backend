@@ -4,25 +4,24 @@ import {
   ScanCommand,
   GetCommand
 } from "@aws-sdk/lib-dynamodb";
-import { defaultTableName } from "../utils";
 
 const client = new DynamoDBClient({});
 const db = DynamoDBDocumentClient.from(client);
 
-export const scan = async (tableName: string | undefined) => {
-  let name = tableName ?? defaultTableName;
-  let result = await db.send(new ScanCommand({ TableName: name }));
+export const tableList = {
+  0: "Products",
+  1: "Stocks"
+};
+
+export const scan = async (tableName: string) => {
+  let result = await db.send(new ScanCommand({ TableName: tableName }));
   return result.Items;
 };
 
-export const getItemById = async (
-  tableName: string | undefined,
-  id: string
-) => {
-  let name = tableName ?? defaultTableName;
+export const getItemById = async (tableName: string, id: string) => {
   let result = await db.send(
     new GetCommand({
-      TableName: name,
+      TableName: tableName,
       Key: {
         id
       }

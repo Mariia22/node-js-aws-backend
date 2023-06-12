@@ -1,4 +1,4 @@
-import { getItemById } from "../ddb/dbFunctions";
+import { getItemById, tableList } from "../ddb/dbFunctions";
 import { response } from "../utils";
 
 export const handler = async (event: any) => {
@@ -7,7 +7,7 @@ export const handler = async (event: any) => {
     if (!id) {
       return response(404, "Product not found");
     }
-    const product = await getItemById(process.env.TABLE_NAME_BASE, id);
+    const product = await getItemById(tableList[0], id);
 
     if (!product) {
       return response(404, "Product not found");

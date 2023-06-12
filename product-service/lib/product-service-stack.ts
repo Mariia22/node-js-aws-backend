@@ -5,6 +5,7 @@ import * as apigwv from "@aws-cdk/aws-apigatewayv2-alpha";
 import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as path from "path";
 import { shareLambdaProps } from "../utils";
+import * as iam from "aws-cdk-lib/aws-iam";
 
 export class ProductServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
@@ -15,6 +16,13 @@ export class ProductServiceStack extends cdk.Stack {
       functionName: "getProducts",
       entry: path.join(__dirname, "..", "handlers", "getProducts.ts")
     });
+
+    getProducts.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["dynamodb:Scan"],
+        resources: ["*"]
+      })
+    );
 
     const getProductsById = new NodejsFunction(this, "GetProductsByIdLambda", {
       ...shareLambdaProps,

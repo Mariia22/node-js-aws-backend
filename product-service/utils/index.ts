@@ -17,3 +17,5 @@ export const shareLambdaProps = {
     PRODUCT_AWS_REGION: process.env.PRODUCT_AWS_REGION
   }
 };
+
+export const defaultTableName = "Products";

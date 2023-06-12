@@ -1,5 +1,5 @@
 import { handler } from "../handlers/getProducts";
-import { products } from "../mockData/products";
+import { products } from "./mockData/products";
 
 describe("Test for lambda function for get all products", () => {
   it("Get all products", async () => {

@@ -1,4 +1,3 @@
-import { products } from "./../mockData/products";
 import { response } from "../utils";
 
 export const handler = async (event: any) => {
@@ -7,7 +6,7 @@ export const handler = async (event: any) => {
     if (!id) {
       return response(404, "Product not found");
     }
-    const product = products.find((item) => item.id === id);
+    const product = [{id:1}].find((item) => item.id === id);
 
     if (!product) {
       return response(404, "Product not found");

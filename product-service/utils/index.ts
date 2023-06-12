@@ -1,4 +1,5 @@
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import { RequestBody } from "../types";
 
 export const response = (code: number, body: any) => ({
   statusCode: code,
@@ -27,4 +28,13 @@ export const joinArrays = (
     return { ...data, count };
   });
   return result;
+};
+
+export const validateProductBody = (product: RequestBody): boolean => {
+  return (
+    typeof product.title === "string" &&
+    typeof product.description === "string" &&
+    typeof product.count === "number" &&
+    typeof product.price === "number"
+  );
 };

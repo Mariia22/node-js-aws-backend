@@ -1,3 +1,4 @@
+import { getItemById } from "../ddb/dbFunctions";
 import { response } from "../utils";
 
 export const handler = async (event: any) => {
@@ -6,7 +7,7 @@ export const handler = async (event: any) => {
     if (!id) {
       return response(404, "Product not found");
     }
-    const product = [{id:1}].find((item) => item.id === id);
+    const product = await getItemById(process.env.TABLE_NAME_BASE, id);
 
     if (!product) {
       return response(404, "Product not found");

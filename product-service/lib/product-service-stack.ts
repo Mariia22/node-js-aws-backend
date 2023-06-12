@@ -30,6 +30,13 @@ export class ProductServiceStack extends cdk.Stack {
       entry: path.join(__dirname, "..", "handlers", "getProductsById.ts")
     });
 
+    getProductsById.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["dynamodb:GetItem"],
+        resources: ["*"]
+      })
+    );
+
     // Defines API Gateway
     const httpApi = new apigwv.HttpApi(this, "ProductApi", {
       corsPreflight: {

@@ -2,8 +2,11 @@ import { DynamoDBClient } from "@aws-sdk/client-dynamodb";
 import {
   DynamoDBDocumentClient,
   ScanCommand,
-  GetCommand
+  GetCommand,
+  PutCommand
 } from "@aws-sdk/lib-dynamodb";
+import { RequestBody } from "../types";
+const AWS = require("aws-sdk");
 
 const client = new DynamoDBClient({});
 const db = DynamoDBDocumentClient.from(client);
@@ -28,4 +31,33 @@ export const getItemById = async (tableName: string, id: string) => {
     })
   );
   return result.Item;
+};
+
+export const createPost = async (
+  requestJSON: RequestBody,
+  tableProducts: string,
+  tableStocks: string
+) => {
+  const postId = AWS.util.uuid.v4();
+  await db.send(
+    new PutCommand({
+      TableName: tableProducts,
+      Item: {
+        id: postId,
+        description: requestJSON.description,
+        title: requestJSON.title,
+        price: requestJSON.price
+      }
+    })
+  );
+  await db.send(
+    new PutCommand({
+      TableName: tableStocks,
+      Item: {
+        product_id: postId,
+        count: requestJSON.count
+      }
+    })
+  );
+  return `Create item ${requestJSON.title}`;
 };

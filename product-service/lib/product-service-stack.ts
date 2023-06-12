@@ -37,6 +37,19 @@ export class ProductServiceStack extends cdk.Stack {
       })
     );
 
+    const createProduct = new NodejsFunction(this, "CreateProductLambda", {
+      ...shareLambdaProps,
+      functionName: "createProduct",
+      entry: path.join(__dirname, "..", "handlers", "createProduct.ts")
+    });
+
+    createProduct.addToRolePolicy(
+      new iam.PolicyStatement({
+        actions: ["dynamodb:PutItem"],
+        resources: ["*"]
+      })
+    );
+
     // Defines API Gateway
     const httpApi = new apigwv.HttpApi(this, "ProductApi", {
       corsPreflight: {
@@ -60,6 +73,12 @@ export class ProductServiceStack extends cdk.Stack {
         "Get products by id",
         getProductsById
       )
+    });
+
+    httpApi.addRoutes({
+      path: "/products",
+      methods: [apigwv.HttpMethod.POST],
+      integration: new HttpLambdaIntegration("Create product", createProduct)
     });
   }
 }

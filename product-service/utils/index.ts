@@ -22,11 +22,9 @@ export const joinArrays = (
   array1: Record<string, any>[],
   array2: Record<string, any>[]
 ): Record<string, any>[] => {
-  const result = array1.map((data) =>
-    Object.assign(
-      data,
-      array2.find((item) => item.product_id === data.id)
-    )
-  );
+  const result = array1.map((data) => {
+    const count = array2.find((item) => item.product_id === data.id)?.count;
+    return { ...data, count };
+  });
   return result;
 };

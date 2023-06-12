@@ -10,3 +10,9 @@ export type Stock = {
   count: number;
 };
 
+export type RequestBody = {
+  title: string;
+  description: string;
+  price: number;
+  count: number;
+}

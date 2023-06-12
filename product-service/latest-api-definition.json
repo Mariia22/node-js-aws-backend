@@ -1,0 +1,111 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "ProductApi",
+    "version": "2023-06-05 12:47:44UTC"
+  },
+  "servers": [
+    {
+      "url": "https://q2o5u95xj4.execute-api.eu-west-1.amazonaws.com"
+    }
+  ],
+  "tags": [
+    {
+      "name": "Products"
+    }
+  ],
+  "paths": {
+    "/products": {
+      "get": {
+        "summary": "Get all products",
+        "operationId": "getProducts",
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/product"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/products/{productId}": {
+      "get": {
+        "summary": "Get product by ID",
+        "operationId": "getProductsById",
+        "parameters": [
+          {
+            "name": "productId",
+            "in": "path",
+            "description": "input Id",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "uuid"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Successful",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/product"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Product not found"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "product": {
+        "required": [
+          "id",
+          "title",
+          "price",
+          "description",
+          "count"
+        ],
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "format": "uuid",
+            "example": "7567ec4b-b10c-48c5-9345-fc73c48a80a1"
+          },
+          "title": {
+            "type": "string",
+            "example": "Drawstring-detail dress"
+          },
+          "price": {
+            "type": "number",
+            "example": 10
+          },
+          "description": {
+            "type": "string",
+            "example": "Drawstring-detail dress"
+          },
+          "count": {
+            "type": "number",
+            "format": "int64",
+            "example": 10
+          }
+        }
+      }
+    }
+  }
+}

@@ -13,7 +13,7 @@ export class ImportServiceStack extends cdk.Stack {
     const importProducts = new NodejsFunction(this, "importProductsFile", {
       ...shareLambdaProps,
       functionName: "importProducts",
-      entry: path.join(__dirname, "..", "handlers", "importProducts.ts")
+      entry: path.join(__dirname, "..", "lambda", "importProducts.ts")
     });
 
     const httpApi = new apigwv.HttpApi(this, "ImportProductsApi", {

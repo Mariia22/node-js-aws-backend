@@ -2,7 +2,6 @@ import { createPost, tableList } from "../ddb/dbFunctions";
 import { response, validateProductBody } from "../utils";
 
 export const handler = async (event: any) => {
-  console.log(event);
   try {
     const body = JSON.parse(event.body);
     if (validateProductBody(body)) {

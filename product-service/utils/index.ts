@@ -1,4 +1,5 @@
 import * as lambda from "aws-cdk-lib/aws-lambda";
+import { RequestBody } from "../types";
 
 export const response = (code: number, body: any) => ({
   statusCode: code,
@@ -16,4 +17,24 @@ export const shareLambdaProps = {
   enviroment: {
     PRODUCT_AWS_REGION: process.env.PRODUCT_AWS_REGION
   }
+};
+
+export const joinArrays = (
+  array1: Record<string, any>[],
+  array2: Record<string, any>[]
+): Record<string, any>[] => {
+  const result = array1.map((data) => {
+    const count = array2.find((item) => item.product_id === data.id)?.count;
+    return { ...data, count };
+  });
+  return result;
+};
+
+export const validateProductBody = (product: RequestBody): boolean => {
+  return (
+    typeof product.title === "string" &&
+    typeof product.description === "string" &&
+    typeof product.count === "number" &&
+    typeof product.price === "number"
+  );
 };

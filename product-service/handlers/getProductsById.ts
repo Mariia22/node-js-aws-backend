@@ -1,13 +1,14 @@
-import { products } from "./../mockData/products";
+import { getItemById, tableList } from "../ddb/dbFunctions";
 import { response } from "../utils";
 
 export const handler = async (event: any) => {
+  console.log(event);
   try {
     const id = event.pathParameters.productId;
     if (!id) {
       return response(404, "Product not found");
     }
-    const product = products.find((item) => item.id === id);
+    const product = await getItemById(tableList[0], id);
 
     if (!product) {
       return response(404, "Product not found");

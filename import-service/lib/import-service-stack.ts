@@ -49,6 +49,19 @@ export class ImportServiceStack extends cdk.Stack {
     });
     parseProducts.addToRolePolicy(parsers3AccessPolicy);
 
+    const catalogBatchProcess = new NodejsFunction(
+      this,
+      "catalogBatchProcess",
+      {
+        ...shareLambdaProps,
+        functionName: "catalogBatchProcess",
+        entry: path.join(__dirname, "..", "lambda", "catalogBatchProcess.ts"),
+        environment: {
+          BUCKET_NAME
+        }
+      }
+    );
+
     const httpApi = new apigwv.HttpApi(this, "ImportProductsApi", {
       corsPreflight: {
         allowHeaders: ["*"],

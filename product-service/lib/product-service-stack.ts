@@ -6,10 +6,30 @@ import { NodejsFunction } from "aws-cdk-lib/aws-lambda-nodejs";
 import * as path from "path";
 import { shareLambdaProps } from "../utils";
 import * as iam from "aws-cdk-lib/aws-iam";
+import * as sqs from "aws-cdk-lib/aws-sqs";
+import { SqsEventSource } from "aws-cdk-lib/aws-lambda-event-sources";
 
 export class ProductServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    const importQueue = new sqs.Queue(this, "importProductsQueue", {
+      queueName: "importProductsQueue"
+    });
+
+    const catalogBatchProcess = new NodejsFunction(
+      this,
+      "catalogBatchProcess",
+      {
+        ...shareLambdaProps,
+        functionName: "catalogBatchProcess",
+        entry: path.join(__dirname, "..", "handlers", "catalogBatchProcess.ts")
+      }
+    );
+
+    catalogBatchProcess.addEventSource(
+      new SqsEventSource(importQueue, { batchSize: 5 })
+    );
 
     const getProducts = new NodejsFunction(this, "GetProductsLambda", {
       ...shareLambdaProps,

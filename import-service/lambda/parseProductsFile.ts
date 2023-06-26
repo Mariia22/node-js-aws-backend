@@ -25,8 +25,13 @@ export const handler = async (event: any) => {
     body
       .pipe(csvParser())
       .on("data", (chunk) => {
+        const message = JSON.stringify({
+          ...chunk,
+          price: Number(chunk.price),
+          count: Number(chunk.count)
+        });
         let params = {
-          MessageBody: JSON.stringify(chunk),
+          MessageBody: message,
           QueueUrl: process.env!.IMPORT_SQS
         };
         sqs.sendMessage(params, function (err: any, chunk: any) {

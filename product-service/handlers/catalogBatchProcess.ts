@@ -5,7 +5,6 @@ export const handler = async (event: any) => {
   try {
     const records = event.Records;
     for (const record of records) {
-      console.log(record.body);
       await createProduct(record.body, tableList[0], tableList[1]);
     }
     return response(200, records);

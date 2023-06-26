@@ -33,7 +33,7 @@ export const getItemById = async (tableName: string, id: string) => {
   return result.Item;
 };
 
-export const createProduct = async (
+export const createPost = async (
   requestJSON: RequestBody,
   tableProducts: string,
   tableStocks: string

@@ -2,7 +2,6 @@ import { getItemById, tableList } from "../ddb/dbFunctions";
 import { response } from "../utils";
 
 export const handler = async (event: any) => {
-  console.log(event);
   try {
     const id = event.pathParameters.productId;
     if (!id) {

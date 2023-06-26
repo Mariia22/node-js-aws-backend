@@ -8,13 +8,21 @@ import * as apigwv from "@aws-cdk/aws-apigatewayv2-alpha";
 import * as s3 from "aws-cdk-lib/aws-s3";
 import * as iam from "aws-cdk-lib/aws-iam";
 import * as s3notifications from "aws-cdk-lib/aws-s3-notifications";
+import * as sqs from "aws-cdk-lib/aws-sqs";
 require("dotenv").config();
 
 const BUCKET_NAME = process.env.BUCKET_NAME as string;
+const QUEUE_NAME = process.env.QUEUE_ARN as string;
 
 export class ImportServiceStack extends cdk.Stack {
   constructor(scope: Construct, id: string, props?: cdk.StackProps) {
     super(scope, id, props);
+
+    const queue = sqs.Queue.fromQueueArn(
+      this,
+      "importProductsQueue",
+      QUEUE_NAME
+    );
 
     const importProducts = new NodejsFunction(this, "importProductsFile", {
       ...shareLambdaProps,
@@ -29,6 +37,7 @@ export class ImportServiceStack extends cdk.Stack {
       actions: ["s3:GetObject", "s3:PutObject"],
       resources: [`arn:aws:s3:::${BUCKET_NAME}/uploaded/*`]
     });
+
     importProducts.addToRolePolicy(s3AccessPolicy);
 
     const parseProducts = new NodejsFunction(this, "parseProductsFile", {
@@ -36,9 +45,12 @@ export class ImportServiceStack extends cdk.Stack {
       functionName: "parseProductsFile",
       entry: path.join(__dirname, "..", "lambda", "parseProductsFile.ts"),
       environment: {
-        BUCKET_NAME
+        BUCKET_NAME,
+        IMPORT_SQS: queue.queueUrl
       }
     });
+
+    queue.grantSendMessages(parseProducts);
 
     const parsers3AccessPolicy = new iam.PolicyStatement({
       actions: ["s3:GetObject", "s3:PutObject", "s3:DeleteObject"],
@@ -47,6 +59,7 @@ export class ImportServiceStack extends cdk.Stack {
         `arn:aws:s3:::${BUCKET_NAME}/parsed/*`
       ]
     });
+
     parseProducts.addToRolePolicy(parsers3AccessPolicy);
 
     const httpApi = new apigwv.HttpApi(this, "ImportProductsApi", {
